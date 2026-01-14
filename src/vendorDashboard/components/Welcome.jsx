@@ -4,6 +4,7 @@ import API_URL from '../data/apiPath';
 const Welcome = () => {
   const [vendorName, setVendorName] = useState('Vendor');
   const [firmName, setFirmName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [statsData, setStatsData] = useState({
     totalProducts: 0,
     firmStatus: 'Not Added'
@@ -11,6 +12,14 @@ const Welcome = () => {
 
   useEffect(() => {
     loadWelcomeData();
+
+    // Listen for storage changes (logout from another tab or same tab)
+    const handleStorageChange = () => {
+      loadWelcomeData();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const loadWelcomeData = async () => {
@@ -19,9 +28,15 @@ const Welcome = () => {
       const vendorId = localStorage.getItem('vendorId');
       const firm = localStorage.getItem('firmName');
 
-      setFirmName(firm || '');
+      // Check if user is logged in
+      if (!vendorId || !loginToken) {
+        setIsLoggedIn(false);
+        setVendorName('Vendor');
+        return;
+      }
 
-      if (!vendorId || !loginToken) return;
+      setIsLoggedIn(true);
+      setFirmName(firm || '');
 
       // Fetch vendor details
       const vendorResponse = await fetch(`${API_URL}/vendor/single-vendor/${vendorId}`, {
@@ -60,6 +75,43 @@ const Welcome = () => {
     }
   };
 
+  // Landing page view (not logged in)
+  if (!isLoggedIn) {
+    return (
+      <div className='welcomeSection'>
+        <div className='welcomeContainer'>
+          <div className='welcomeHeader'>
+            <div className='welcomeIcon'>🚀</div>
+            <h1 className='welcomeTitle'>Vendor Dashboard</h1>
+            <p className='welcomeSubtitle'>Manage your restaurants...</p>
+          </div>
+
+          <div className='welcomeContent'>
+            <div className='welcomeMessage'>
+              <p>Welcome to your vendor management platform! Login or register to get started managing your restaurants, products, and analytics.</p>
+            </div>
+
+            <div className='quickActions'>
+              <div className='actionItem'>
+                <span className='actionIcon'>🔓</span>
+                <p>Login to Account</p>
+              </div>
+              <div className='actionItem'>
+                <span className='actionIcon'>📝</span>
+                <p>Create Account</p>
+              </div>
+              <div className='actionItem'>
+                <span className='actionIcon'>💼</span>
+                <p>Manage Business</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Personalized welcome view (logged in)
   return (
     <div className='welcomeSection'>
       <div className='welcomeContainer'>

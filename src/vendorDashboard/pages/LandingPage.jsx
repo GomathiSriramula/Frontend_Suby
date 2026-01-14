@@ -16,7 +16,7 @@ const LandingPage = () => {
   const [showRegister,setShowRegister] = useState(false);
   const [showFirm,setShowFirm] = useState(false);
   const [showProduct,setShowProduct] = useState(false);
-  const [showWelcome,setShowWelcome] = useState(false);
+  const [showWelcome,setShowWelcome] = useState(true);
   const [showAllProducts,setShowAllProducts] = useState(false);
   const [showUserDetails,setShowUserDetails] = useState(false);
   const [showLogout,setShowLogout]= useState(false);
@@ -29,6 +29,9 @@ const LandingPage = () => {
     if(loginToken)
     {
       setShowLogout(true);
+      setShowWelcome(true);
+      setShowLogin(false);
+      setShowRegister(false);
       // Fetch vendor firm status
       checkVendorFirmStatus();
     }
@@ -113,6 +116,7 @@ const LandingPage = () => {
     setShowLogin(false);
     setShowFirm(false);
     setShowAllProducts(false);
+    setShowUserDetails(false);
     // Check firm status when showing welcome (after login)
     checkVendorFirmStatus();
   }
@@ -142,6 +146,11 @@ const LandingPage = () => {
     setShowFirmTitle(false);
     setShowFirm(false);
     setShowWelcome(true);
+    setShowLogin(false);
+    setShowRegister(false);
+    setShowProduct(false);
+    setShowAllProducts(false);
+    setShowUserDetails(false);
   }
 
   const showAllProductsHandler = ()=>{
@@ -190,17 +199,19 @@ const LandingPage = () => {
       showWelcomeHandler={showWelcomeHandler}
       />
       <div className="collectionSection">
-        <SideBar showFirmHandler={showFirmHandler}
-         showProductHandler={showProductHandler}
-          showAllProductsHandler={showAllProductsHandler}
-          showUserDetailsHandler={showUserDetailsHandler}
-          showFirmTitle={showFirmTitle}
-        />
+        {showLogout && (
+          <SideBar showFirmHandler={showFirmHandler}
+           showProductHandler={showProductHandler}
+            showAllProductsHandler={showAllProductsHandler}
+            showUserDetailsHandler={showUserDetailsHandler}
+            showFirmTitle={showFirmTitle}
+          />
+        )}
        {showLogin && <Login  showWelcomeHandler={showWelcomeHandler}/>}
        {showRegister && <Register showLoginHandler={showLoginHandler} />}
        {showFirm && <AddFirm handleFirmAdded={handleFirmAdded} />}
        {showProduct && <AddProduct />}
-       {showWelcome && <Welcome/>}
+       {showWelcome && <Welcome key={showLogout} />}
        {showAllProducts && <AllProducts/>}
        {showUserDetails && <UserDetails/>}
       
