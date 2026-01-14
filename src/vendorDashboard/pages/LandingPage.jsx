@@ -187,6 +187,7 @@ const LandingPage = () => {
       <Navbar showLoginHandler ={showLoginHandler} showRegisterHandler={showRegisterHandler}
       showLogout={showLogout} 
       logoutHandler={logoutHandler}
+      showWelcomeHandler={showWelcomeHandler}
       />
       <div className="collectionSection">
         <SideBar showFirmHandler={showFirmHandler}

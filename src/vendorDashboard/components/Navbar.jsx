@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const Navbar = ({showLoginHandler,showRegisterHandler,showLogout,logoutHandler}) => {
+const Navbar = ({showLoginHandler,showRegisterHandler,showLogout,logoutHandler,showWelcomeHandler}) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firmName, setFirmName] = useState('');
@@ -36,10 +36,16 @@ const Navbar = ({showLoginHandler,showRegisterHandler,showLogout,logoutHandler})
     setIsLoggedIn(!!loginToken);
     setFirmName(firm || '');
   };
+
+  const handleCompanyClick = () => {
+    if (isLoggedIn && showWelcomeHandler) {
+      showWelcomeHandler();
+    }
+  };
   
   return (
     <div className='navSection'>
-      <div className='company'>
+      <div className='company' onClick={handleCompanyClick} style={{ cursor: isLoggedIn ? 'pointer' : 'default' }}>
         {isLoggedIn && firmName ? `${firmName} Dashboard` : 'Vendor Dashboard'}
       </div>
       <div className='userAuth'>
