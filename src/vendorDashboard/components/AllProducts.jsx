@@ -47,7 +47,9 @@ const AllProducts = () => {
 
   return (
     <div>
-      {products.length === 0 ? (
+      {products?.length === 0 ? (
+
+     
         <p>No products Added</p>
       ) : (
         <table className="product-table">
@@ -61,7 +63,8 @@ const AllProducts = () => {
           </thead>
 
           <tbody>
-            {products.map(item => (
+            {products?.map(item => (
+
               <tr key={item._id}>
                 <td>{item.productName}</td>
                 <td>{item.price}</td>

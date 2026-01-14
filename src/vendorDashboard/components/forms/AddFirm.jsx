@@ -38,7 +38,7 @@ const handleRegionChange = (event) => {
   }
 };
 
-
+{/*
 const handleFirmSubmit = async(e)=>{
 e.preventDefault();
 
@@ -103,7 +103,74 @@ localStorage.setItem('firmId',firmId);
 console.error("Failed to add Firm");
 }
 
+  } */}
+
+  const handleFirmSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const loginToken = localStorage.getItem("loginToken");
+
+    if (!loginToken) {
+      alert("Please login first ❌");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("firmName", firmName);
+    formData.append("area", area);
+    formData.append("offer", offer);
+
+    category.forEach((value) => {
+      formData.append("category", value);
+    });
+
+    region.forEach((value) => {
+      formData.append("region", value);
+    });
+
+    formData.append("image", file);
+
+    const response = await fetch(`${API_URL}/firm/add-firm`, {
+      method: "POST",
+      headers: {
+        token: loginToken,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // ✅ ONLY here we store firm
+      localStorage.setItem("firmId", data.firmId);
+      localStorage.setItem("firmName", data.firmName || firmName);
+
+      alert("Firm Added Successfully ✅");
+
+      setArea("");
+      setCategory([]);
+      setFirmName("");
+      setOffer("");
+      setRegion([]);
+      setFile(null);
+
+      return;
+    }
+
+    if (data.message === "Only one firm allowed per vendor") {
+      alert("Only one firm allowed per vendor ❌");
+      return;
+    }
+
+    alert("Failed to add Firm ❌");
+
+  } catch (error) {
+    console.error(error);
+    alert("Server error ❌");
   }
+};
+
 
   return (
   <div className="firmSection">
