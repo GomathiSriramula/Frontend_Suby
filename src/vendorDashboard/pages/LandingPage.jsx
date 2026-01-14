@@ -103,6 +103,7 @@ const LandingPage = () => {
     setShowProduct(false);
     setShowWelcome(false);
     setShowAllProducts(false);
+    setShowUserDetails(false);
   }
 
   const showWelcomeHandler= ()=>{
@@ -123,6 +124,7 @@ const LandingPage = () => {
     setShowProduct(false);
      setShowWelcome(false);
      setShowAllProducts(false);
+     setShowUserDetails(false);
   }
 
   const showFirmHandler = ()=>{
@@ -132,6 +134,7 @@ const LandingPage = () => {
     setShowProduct(false);
     setShowWelcome(false);
     setShowAllProducts(false);
+    setShowUserDetails(false);
   }
 
   // Call this after firm is successfully added
@@ -147,6 +150,7 @@ const LandingPage = () => {
     setShowLogin(false);
     setShowFirm(false);
      setShowWelcome(false);
+    setShowUserDetails(false);
     setShowAllProducts(true);
   }
 
