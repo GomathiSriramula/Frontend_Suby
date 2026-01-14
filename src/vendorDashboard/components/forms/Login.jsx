@@ -112,6 +112,7 @@ const Login = ({ showWelcomeHandler }) => {
 
       localStorage.setItem("loginToken", data.token);
       const vendorId = data.vendorId;
+      localStorage.setItem("vendorId", vendorId);
 
       // 🔥 Fetch vendor & firm details
       const vendorResponse = await fetch(
@@ -125,9 +126,10 @@ const Login = ({ showWelcomeHandler }) => {
         const vendorFirmName =
        vendorData.vendorFirmName;
 
-        localStorage.setItem("firmId", vendorFirmId);
-        localStorage.setItem("firmName", vendorFirmName);
-        window.location.reload(); // to update the state in LandingPage.jsx
+        if (vendorFirmId) {
+          localStorage.setItem("firmId", vendorFirmId);
+          localStorage.setItem("firmName", vendorFirmName);
+        }
       }
 
       // reset form

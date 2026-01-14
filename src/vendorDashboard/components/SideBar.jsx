@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SideBar = ({showFirmHandler,showProductHandler,showAllProductsHandler,showFirmTitle}) => {
+const SideBar = ({showFirmHandler,showProductHandler,showAllProductsHandler,showUserDetailsHandler,showFirmTitle}) => {
   return (
    <div className="sideBarSection">
     <ul>
@@ -8,7 +8,7 @@ const SideBar = ({showFirmHandler,showProductHandler,showAllProductsHandler,show
       {showFirmTitle && <li onClick={showFirmHandler}>Add Firm</li>}
       <li onClick={showProductHandler}>Add Product</li>
       <li onClick={showAllProductsHandler}>All Products</li>
-      <li>User Details</li>
+      <li onClick={showUserDetailsHandler}>User Details</li>
     </ul>
    </div>
   )

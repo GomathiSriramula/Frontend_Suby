@@ -7,6 +7,8 @@ import AddFirm from '../components/forms/AddFirm'
 import AddProduct from '../components/forms/AddProduct'
 import Welcome from '../components/Welcome'
 import AllProducts from '../components/AllProducts'
+import UserDetails from '../components/UserDetails'
+import API_URL from '../data/apiPath';
 
 const LandingPage = () => {
  
@@ -16,28 +18,55 @@ const LandingPage = () => {
   const [showProduct,setShowProduct] = useState(false);
   const [showWelcome,setShowWelcome] = useState(false);
   const [showAllProducts,setShowAllProducts] = useState(false);
+  const [showUserDetails,setShowUserDetails] = useState(false);
   const [showLogout,setShowLogout]= useState(false);
   const [showFirmTitle,setShowFirmTitle]= useState(true);
 
+  // Check authentication and firm status on mount
   useEffect(()=>{
-  const loginToken = localStorage.getItem("loginToken");
-  
-  if(loginToken)
-  {
-  setShowLogout(true);
-  }
-
+    const loginToken = localStorage.getItem("loginToken");
+    
+    if(loginToken)
+    {
+      setShowLogout(true);
+      // Fetch vendor firm status
+      checkVendorFirmStatus();
+    }
   },[])
 
-  useEffect(()=>{
+  // Function to check if vendor has a firm
+  const checkVendorFirmStatus = async () => {
+    try {
+      const loginToken = localStorage.getItem("loginToken");
+      const vendorId = localStorage.getItem("vendorId");
 
-  const firmName = localStorage.getItem("firmName");
+      if (!vendorId) return;
 
-  if(firmName)
-  {
-    setShowFirmTitle(false);
-  }
-  },[])
+      // Update logout state when checking firm (indicates user is logged in)
+      setShowLogout(true);
+
+      const response = await fetch(`${API_URL}/vendor/single-vendor/${vendorId}`, {
+        method: "GET",
+        headers: {
+          token: loginToken,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.vendorFirmId) {
+        // Firm exists, hide Add Firm
+        setShowFirmTitle(false);
+        localStorage.setItem("firmId", data.vendorFirmId);
+        localStorage.setItem("firmName", data.vendorFirmName);
+      } else {
+        // No firm, show Add Firm
+        setShowFirmTitle(true);
+      }
+    } catch (error) {
+      console.error("Error checking firm status:", error);
+    }
+  };
 
 
   const logoutHandler = () => {
@@ -45,19 +74,23 @@ const LandingPage = () => {
 
   if (!sure) return;   // stop if Cancel
 
-  localStorage.removeItem("loginToken");
-  localStorage.removeItem("firmId");
-  localStorage.removeItem("firmName");
+  // Update UI state FIRST before clearing localStorage
   setShowLogout(false);
-
-  // reset UI
   setShowLogin(false);
   setShowRegister(false);
   setShowFirm(false);
   setShowProduct(false);
   setShowAllProducts(false);
+  setShowUserDetails(false);
   setShowWelcome(true);
   setShowFirmTitle(true);
+
+  // Then clear localStorage
+  localStorage.removeItem("loginToken");
+  localStorage.removeItem("vendorId");
+  localStorage.removeItem("firmId");
+  localStorage.removeItem("firmName");
+
   alert("Logged out successfully ✅");
 };
 
@@ -78,7 +111,9 @@ const LandingPage = () => {
     setShowRegister(false);
     setShowLogin(false);
     setShowFirm(false);
-  setShowAllProducts(false);
+    setShowAllProducts(false);
+    // Check firm status when showing welcome (after login)
+    checkVendorFirmStatus();
   }
 
   const showRegisterHandler = ()=>{
@@ -95,8 +130,15 @@ const LandingPage = () => {
     setShowLogin(false);
     setShowFirm(true);
     setShowProduct(false);
-     setShowWelcome(false);
-     setShowAllProducts(false);
+    setShowWelcome(false);
+    setShowAllProducts(false);
+  }
+
+  // Call this after firm is successfully added
+  const handleFirmAdded = () => {
+    setShowFirmTitle(false);
+    setShowFirm(false);
+    setShowWelcome(true);
   }
 
   const showAllProductsHandler = ()=>{
@@ -114,7 +156,25 @@ const LandingPage = () => {
     setShowLogin(false);
     setShowFirm(false);
     setShowAllProducts(false);
-     setShowWelcome(false);
+    setShowWelcome(false);
+    setShowUserDetails(false);
+  }
+
+  const showUserDetailsHandler = () => {
+    const loginToken = localStorage.getItem("loginToken");
+    
+    if (!loginToken) {
+      alert("Please login first to view user details ❌");
+      return;
+    }
+
+    setShowUserDetails(true);
+    setShowRegister(false);
+    setShowLogin(false);
+    setShowFirm(false);
+    setShowProduct(false);
+    setShowAllProducts(false);
+    setShowWelcome(false);
   }
 
   return (
@@ -127,15 +187,17 @@ const LandingPage = () => {
       <div className="collectionSection">
         <SideBar showFirmHandler={showFirmHandler}
          showProductHandler={showProductHandler}
-          showAllProductsHandler={showAllProductsHandler} 
+          showAllProductsHandler={showAllProductsHandler}
+          showUserDetailsHandler={showUserDetailsHandler}
           showFirmTitle={showFirmTitle}
         />
        {showLogin && <Login  showWelcomeHandler={showWelcomeHandler}/>}
        {showRegister && <Register showLoginHandler={showLoginHandler} />}
-       {showFirm && <AddFirm />}
+       {showFirm && <AddFirm handleFirmAdded={handleFirmAdded} />}
        {showProduct && <AddProduct />}
        {showWelcome && <Welcome/>}
        {showAllProducts && <AllProducts/>}
+       {showUserDetails && <UserDetails/>}
       
       </div>
       

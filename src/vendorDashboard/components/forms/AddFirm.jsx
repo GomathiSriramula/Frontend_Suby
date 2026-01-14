@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import API_URL from '../../data/apiPath';
 
-const AddFirm = () => {
+const AddFirm = ({ handleFirmAdded }) => {
 
   const [firmName,setFirmName] = useState("");
   const [area,setArea] = useState("");
@@ -154,6 +154,11 @@ console.error("Failed to add Firm");
       setOffer("");
       setRegion([]);
       setFile(null);
+
+      // Call parent handler to disable Add Firm in sidebar
+      if (handleFirmAdded) {
+        handleFirmAdded();
+      }
 
       return;
     }
