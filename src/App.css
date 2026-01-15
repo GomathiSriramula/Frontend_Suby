@@ -591,6 +591,72 @@ button:active {
   transform: translateY(-1px);
 }
 
+.firmSection {
+  margin-top: 40px;
+  padding: 25px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #f3e8ff 100%);
+  border-radius: 15px;
+  border-left: 5px solid #3b82f6;
+}
+
+.firmSection h3 {
+  margin-top: 0;
+  color: #1e3a8a;
+}
+
+.firmActions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.editFirmBtn,
+.deleteFirmBtn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.editFirmBtn {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.editFirmBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.deleteFirmBtn {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.deleteFirmBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+}
+
+.noFirmCard {
+  margin-top: 30px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px dashed #cbd5e1;
+  border-radius: 15px;
+  text-align: center;
+  color: #64748b;
+  font-weight: 600;
+}
+
 .userDetailsSection .error {
   color: #dc2626;
   background: #fee2e2;
@@ -1652,5 +1718,78 @@ button:active {
 
   .formActions {
     flex-direction: column;
+  }
+}
+
+/* ================= EDIT FIRM MODAL ================= */
+
+.editFirmModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.editFirmOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.editFirmContainer {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1001;
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.editFirmHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.editFirmHeader h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #0f172a;
+}
+
+.editFirmForm {
+  padding: 30px;
+}
+
+@media (max-width: 600px) {
+  .editFirmContainer {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .editFirmHeader {
+    padding: 20px;
+  }
+
+  .editFirmForm {
+    padding: 20px;
   }
 }

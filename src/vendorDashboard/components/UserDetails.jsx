@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import API_URL from "../data/apiPath";
+import EditFirm from "./forms/EditFirm";
 
 const UserDetails = () => {
   const [vendorData, setVendorData] = useState(null);
-  const [firmData, setFirmData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showEditFirm, setShowEditFirm] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in
@@ -82,6 +83,53 @@ const UserDetails = () => {
     );
   }
 
+  const handleDeleteFirm = async () => {
+    const isConfirmed = window.confirm("Are you sure you want to delete your firm? All products will be deleted.");
+    if (!isConfirmed) return;
+
+    try {
+      const firmId = localStorage.getItem("firmId");
+      const loginToken = localStorage.getItem("loginToken");
+
+      if (!firmId || !loginToken) {
+        alert("Firm information not found");
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/firm/${firmId}`, {
+        method: "DELETE",
+        headers: {
+          token: loginToken,
+        },
+      });
+
+      if (response.ok) {
+        localStorage.removeItem("firmId");
+        localStorage.removeItem("firmName");
+        setVendorData({
+          ...vendorData,
+          firmName: "No Firm Added",
+          firmId: "N/A",
+        });
+        alert("Firm deleted successfully ✅");
+        fetchUserDetails();
+      } else {
+        alert("Failed to delete firm ❌");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Error deleting firm");
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditFirm(false);
+  };
+
+  const handleFirmUpdated = () => {
+    fetchUserDetails();
+  };
+
   return (
     <div className="userDetailsSection">
       <div className="profileHeader">
@@ -104,16 +152,53 @@ const UserDetails = () => {
           <label>Email:</label>
           <p>{vendorData?.email}</p>
         </div>
-        {vendorData?.firmId && vendorData?.firmId !== "N/A" && (
-          <div className="detailItem">
-            <label>Firm ID:</label>
-            <p>{vendorData?.firmId}</p>
-          </div>
-        )}
       </div>
+
+      {vendorData?.firmId && vendorData?.firmId !== "N/A" ? (
+        <div className="firmSection">
+          <h3>Firm Management</h3>
+          <div className="detailsCard">
+            <div className="detailItem">
+              <label>Firm Name:</label>
+              <p>{vendorData?.firmName}</p>
+            </div>
+            <div className="detailItem">
+              <label>Firm ID:</label>
+              <p>{vendorData?.firmId}</p>
+            </div>
+          </div>
+          <div className="firmActions">
+            <button 
+              className="editFirmBtn"
+              onClick={() => setShowEditFirm(true)}
+            >
+              ✏️ Edit Firm
+            </button>
+            <button 
+              className="deleteFirmBtn"
+              onClick={handleDeleteFirm}
+            >
+              🗑️ Delete Firm
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="noFirmCard">
+          <p>No firm added yet. Add a firm to get started!</p>
+        </div>
+      )}
+
       <button onClick={fetchUserDetails} className="refreshBtn">
         Refresh Details
       </button>
+
+      {showEditFirm && (
+        <EditFirm 
+          firmId={vendorData?.firmId}
+          onClose={handleCloseEditModal}
+          onUpdate={handleFirmUpdated}
+        />
+      )}
     </div>
   );
 };
